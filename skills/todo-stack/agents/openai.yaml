@@ -1,0 +1,4 @@
+interface:
+  display_name: "Todo Stack"
+  short_description: "Manage tracked Markdown task stacks"
+  default_prompt: "Use $todo-stack to inspect or update the current task stacks."

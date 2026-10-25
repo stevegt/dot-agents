@@ -1,0 +1,4 @@
+interface:
+  display_name: "Commit Promise"
+  short_description: "Commit one exact Git promise"
+  default_prompt: "Use $commit to create and self-review one Git promise commit."

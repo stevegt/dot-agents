@@ -1,0 +1,4 @@
+interface:
+  display_name: "Replan"
+  short_description: "Review and restate the current plan"
+  default_prompt: "Use $replan to review and restate the current plan."

@@ -1,0 +1,35 @@
+digraph todo_stack {
+    graph [rankdir=TB, label="todo-stack flow", labelloc=t, fontsize=18];
+    node [shape=box, fontname="sans-serif", style=filled, fillcolor="white"];
+    edge [fontname="sans-serif"];
+
+    init [label="Initialize five stack files", URL="todo-stack.md#stack-files"];
+    default_stack [label="Runnable item in default.md", URL="todo-stack.md#task-transitions"];
+    perform [label="Perform item and its acceptance checks", URL="todo-stack.md#task-transitions"];
+    outcome [shape=diamond, label="Result", URL="todo-stack.md#task-transitions"];
+    completed [shape=ellipse, peripheries=2, label="Move accepted item to completed.md", fillcolor="#d9ead3", URL="todo-stack.md#task-transitions"];
+    blocked [label="Move item to blocked.md with reason", URL="todo-stack.md#task-transitions"];
+    approval [shape=diamond, label="User approves exact abandonment", URL="todo-stack.md#task-transitions"];
+    wontfix [shape=octagon, label="Move item to wontfix.md with evidence", fillcolor="#f4cccc", URL="todo-stack.md#task-transitions"];
+
+    init -> default_stack [label="push work", id="ST-001", weight=5, penwidth=2.5, URL="todo-stack.md#command-interface"];
+    default_stack -> perform [label="peek stack top", id="ST-002", weight=5, penwidth=2.5, URL="todo-stack.md#command-interface"];
+    perform -> outcome [label="evaluate", id="ST-003", weight=5, penwidth=2.5, URL="todo-stack.md#task-transitions"];
+    outcome -> completed [label="accepted", id="ST-004", weight=5, penwidth=2.5, URL="todo-stack.md#task-transitions"];
+    outcome -> blocked [label="wait for named event", id="ST-005", weight=1, penwidth=1.0, URL="todo-stack.md#task-transitions"];
+    blocked -> default_stack [label="record verified unblock evidence", id="ST-006", weight=5, penwidth=2.5, URL="todo-stack.md#task-transitions"];
+    outcome -> approval [label="propose permanent abandonment", id="ST-007", weight=1, penwidth=1.0, URL="todo-stack.md#task-transitions"];
+    approval -> wontfix [label="approved", id="ST-008", weight=1, penwidth=1.0, URL="todo-stack.md#task-transitions"];
+    approval -> default_stack [label="not approved", id="ST-009", weight=5, penwidth=2.5, URL="todo-stack.md#task-transitions"];
+
+    command [label="Command acquires scope lock", URL="todo-stack.md#atomicity-and-recovery"];
+    recover [label="Complete unfinished journal", URL="todo-stack.md#atomicity-and-recovery"];
+    validate [label="Validate stacks and stale-write expectations", URL="todo-stack.md#atomicity-and-recovery"];
+    install [label="Install and sync replacement files", URL="todo-stack.md#atomicity-and-recovery"];
+    durable [shape=ellipse, peripheries=2, label="One recoverable final state", URL="todo-stack.md#atomicity-and-recovery"];
+
+    command -> recover [label="serialize", id="ST-010", weight=5, penwidth=2.5, URL="todo-stack.md#atomicity-and-recovery"];
+    recover -> validate [label="read recovered state", id="ST-011", weight=5, penwidth=2.5, URL="todo-stack.md#atomicity-and-recovery"];
+    validate -> install [label="write journal and images", id="ST-012", weight=5, penwidth=2.5, URL="todo-stack.md#atomicity-and-recovery"];
+    install -> durable [label="sync log and remove journal", id="ST-013", weight=5, penwidth=2.5, URL="todo-stack.md#atomicity-and-recovery"];
+}
